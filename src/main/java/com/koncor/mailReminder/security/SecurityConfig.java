@@ -39,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "select username, password, 'true' as enabled from users where username=?")
                 .authoritiesByUsernameQuery(
                         "select username, role from user_roles where username=?");
-
     }
 
     @Override
@@ -49,12 +48,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .antMatchers("/dashboard/**").access("hasRole('ROLE_USER')")
                 .and()
-                .formLogin().loginPage("/login").failureUrl("/login?error").defaultSuccessUrl("/dashboard")
+                .formLogin().loginPage("/login").failureUrl("/login?error")//.defaultSuccessUrl("/dashboard")
                 .usernameParameter("username").passwordParameter("password")
                 .and()
                 .logout().logoutSuccessUrl("/login?logout")
                 .and()
-                .exceptionHandling().accessDeniedPage("/403")
+                .exceptionHandling().accessDeniedPage("/login")
                 .and()
                 .csrf();
     }
@@ -71,6 +70,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(myUserDetailsService);
+        auth.userDetailsService(myUserDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 }

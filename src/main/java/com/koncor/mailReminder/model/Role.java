@@ -16,15 +16,9 @@ public class Role {
     @Column(name = "role")
     private String name;
 
-//    @Column(name = "username")
-//    private String username;
-
     @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "username")
     private User user;
-
-//    @Column(name = "username")
-//    private String username;
 
     public Role(String name){
         this.name = name;
@@ -33,7 +27,6 @@ public class Role {
     public Role(User user, String name){
         this.id = 0L;
         this.user = user;
-//        this.username = user.getUsername();
         this.name = name;
     }
 
@@ -42,24 +35,6 @@ public class Role {
         this.user = null;
         this.name = null;
     }
-
-//    public String getUsername() {
-//        return username;
-//    }
-
-//    public Role(String name, String username){
-//        this.name = name;
-////        this.username = username;
-//    }
-
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
-//    @Column(name = "user_login")
-//    private String username;
-//
-//    @JoinColumn(name = "username")
-
 
     public Long getId() {
         return id;

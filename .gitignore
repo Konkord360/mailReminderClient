@@ -6,6 +6,7 @@ target/
 .mvn/
 mvnw
 mvnw.cmd
+mailReminderClient
 
 ### STS ###
 .apt_generated

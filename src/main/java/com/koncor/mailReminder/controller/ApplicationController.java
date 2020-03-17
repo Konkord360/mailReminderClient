@@ -25,18 +25,6 @@ public class ApplicationController {
     @Autowired
     private SecurityService securityService;
 
-    @Autowired
-    private UserValidator userValidator;
-
-    private final UserRepository userRepository;
-    //
-    private final PasswordEncoder passwordEncoder;
-
-    public ApplicationController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("user", new User());
@@ -47,7 +35,6 @@ public class ApplicationController {
     //
     @PostMapping("/register")
     public String registerUser(@ModelAttribute @Valid User user, BindingResult bindingResult) {
-        ModelAndView modelAndView;
 
         if (bindingResult.hasErrors()) {
             return "registration";
@@ -56,7 +43,7 @@ public class ApplicationController {
         userService.save(user);
 
         securityService.autoLogin(user.getUsername(), user.getPasswordConfirm());
-
+        System.out.println("LOGGED IN USER: " + securityService.findLoggedInUsername());
         return "redirect:/dashboard";
     }
 
@@ -75,6 +62,12 @@ public class ApplicationController {
         User user = new User(username, "");
         System.out.println(username);
         model.addAttribute("user", user);
+        return "dashboard";
+    }
+
+    @PostMapping("/dashboard")
+    public String dashboard(@ModelAttribute @Valid User user, BindingResult bindingResult){
+        System.out.println("TUTAJ");
         return "dashboard";
     }
 

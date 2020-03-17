@@ -7,7 +7,6 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User {
-//    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -20,11 +19,6 @@ public class User {
     private String passwordConfirm;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "user")
-//    @JoinTable(
-//            name = "user_roles",
-//            joinColumns = @JoinColumn(
-//                    name = "username", referencedColumnName = "username")
-//    )
     private Set<Role> roles;
 
     public Long getId() {
