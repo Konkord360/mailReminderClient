@@ -1,5 +1,6 @@
 package com.koncor.mailReminder.accessDataJPA;
 
+import com.koncor.mailReminder.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

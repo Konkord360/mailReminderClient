@@ -1,7 +1,11 @@
 package com.koncor.mailReminder.controller;
 
-import com.koncor.mailReminder.accessDataJPA.User;
-import com.koncor.mailReminder.accessDataJPA.UserRepository;
+import com.koncor.mailReminder.model.User;
+import com.koncor.mailReminder.repository.UserRepository;
+import com.koncor.mailReminder.security.SecurityService;
+import com.koncor.mailReminder.services.UserService;
+import com.koncor.mailReminder.validators.UserValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +19,14 @@ import javax.validation.Valid;
 
 @Controller
 public class ApplicationController {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SecurityService securityService;
+
+    @Autowired
+    private UserValidator userValidator;
 
     private final UserRepository userRepository;
     //
@@ -34,25 +46,18 @@ public class ApplicationController {
 
     //
     @PostMapping("/register")
-    public ModelAndView registerUser(@ModelAttribute @Valid User user, BindingResult bindingResult) {
+    public String registerUser(@ModelAttribute @Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView;
 
-        if (this.userRepository.findByUsername(user.getUsername()) != null) {
-            bindingResult.rejectValue("username", "userAlreadyExists");
-            modelAndView = new ModelAndView("register");
-            modelAndView.addObject("user", user);
-            return modelAndView;
+        if (bindingResult.hasErrors()) {
+            return "registration";
         }
 
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
-        modelAndView = new ModelAndView("redirect:/login");
-        user.setUsername(user.getUsername().toUpperCase());
-        user.setPassword(hashedPassword);
+        userService.save(user);
 
-        this.userRepository.save(user);
-        System.out.println(user.toString());
+        securityService.autoLogin(user.getUsername(), user.getPasswordConfirm());
 
-        return modelAndView;
+        return "redirect:/dashboard";
     }
 
     //
@@ -67,7 +72,7 @@ public class ApplicationController {
             username = principal.toString();
         }
 
-        User user = new User(username, "", true);
+        User user = new User(username, "");
         System.out.println(username);
         model.addAttribute("user", user);
         return "dashboard";
