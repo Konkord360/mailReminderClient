@@ -1,4 +1,4 @@
-package com.koncor.mailReminder.security;
+package com.koncor.mailReminder.services;
 
 public interface SecurityService {
     String findLoggedInUsername();

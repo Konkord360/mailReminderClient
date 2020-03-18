@@ -1,9 +1,6 @@
 package com.koncor.mailReminder.model;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "user_roles")

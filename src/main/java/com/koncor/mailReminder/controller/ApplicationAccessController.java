@@ -1,14 +1,11 @@
 package com.koncor.mailReminder.controller;
 
 import com.koncor.mailReminder.model.User;
-import com.koncor.mailReminder.repository.UserRepository;
-import com.koncor.mailReminder.security.SecurityService;
+import com.koncor.mailReminder.services.SecurityService;
 import com.koncor.mailReminder.services.UserService;
-import com.koncor.mailReminder.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,15 +15,19 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 @Controller
-public class ApplicationController {
-    @Autowired
-    private UserService userService;
+public class ApplicationAccessController {
+    private final UserService userService;
+    private final SecurityService securityService;
 
     @Autowired
-    private SecurityService securityService;
+    public ApplicationAccessController(UserService userService, SecurityService securityService) {
+        this.userService = userService;
+        this.securityService = securityService;
+    }
 
     @GetMapping("/register")
     public String registerForm(Model model) {
+
         model.addAttribute("user", new User());
 
         return "register";
@@ -66,13 +67,12 @@ public class ApplicationController {
     }
 
     @PostMapping("/dashboard")
-    public String dashboard(@ModelAttribute @Valid User user, BindingResult bindingResult){
-        System.out.println("TUTAJ");
+    public String dashboard(@ModelAttribute @Valid User user, BindingResult bindingResult) {
         return "dashboard";
     }
 
     //for Future uses
-// If user will be successfully authenticated he/she will be taken to the login secure page.
+    // If user will be successfully authenticated he/she will be taken to the login secure page.
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public ModelAndView adminPage() {
 
@@ -84,7 +84,6 @@ public class ApplicationController {
         return m;
     }
 
-    // Spring security will see this message.
     @GetMapping(value = "/login")
     public ModelAndView login(@RequestParam(value = "error", required = false) String error,
                               @RequestParam(value = "logout", required = false) String logout) {
@@ -97,7 +96,10 @@ public class ApplicationController {
         if (logout != null) {
             m.addObject("msg", "You have left successfully.");
         }
-
+        if (securityService.findLoggedInUsername() != null) {
+            m.setViewName("redirect:/dashboard");
+            return m;
+        }
         m.setViewName("login");
         return m;
     }

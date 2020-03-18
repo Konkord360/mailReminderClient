@@ -11,9 +11,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
 //for future uses
-public class PasswordSecurer implements PasswordEncoder {
-    private static int iterationCount = 65536;
-    private static int keyLength = 640;
+class PasswordSecurer implements PasswordEncoder {
 
     public static byte[] getSalt() {
         SecureRandom random = new SecureRandom();
@@ -24,6 +22,9 @@ public class PasswordSecurer implements PasswordEncoder {
     }
 
     public static byte[] hashPassword(char[] password, byte[] salt) {
+        int iterationCount = 65536;
+        int keyLength = 640;
+
         KeySpec spec = new PBEKeySpec(password, salt, iterationCount, keyLength);
         SecretKeyFactory factory = null;
         try {

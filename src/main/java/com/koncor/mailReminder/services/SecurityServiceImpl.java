@@ -1,30 +1,27 @@
-package com.koncor.mailReminder.security;
+package com.koncor.mailReminder.services;
 
 import com.koncor.mailReminder.accessDataJPA.MyUserDetailsService;
-import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 @Service
-public class SecurityServiceImpl implements SecurityService{
-    @Autowired
+public class SecurityServiceImpl implements SecurityService {
     private AuthenticationManager authenticationManager;
+    private final MyUserDetailsService myUserDetailsService;
+    private static final Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
     @Autowired
-    private MyUserDetailsService myUserDetailsService;
-
-    private static final Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
+    public SecurityServiceImpl(AuthenticationManager authenticationManager, MyUserDetailsService myUserDetailsService) {
+        this.authenticationManager = authenticationManager;
+        this.myUserDetailsService = myUserDetailsService;
+    }
 
     @Override
     public String findLoggedInUsername() {

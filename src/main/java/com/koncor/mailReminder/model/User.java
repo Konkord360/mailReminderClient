@@ -1,6 +1,5 @@
 package com.koncor.mailReminder.model;
 
-import javax.jws.soap.SOAPBinding;
 import javax.persistence.*;
 import java.util.Set;
 
