@@ -1,6 +1,7 @@
 package com.koncor.mailReminder.accessDataJPA;
 
 import com.koncor.mailReminder.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,7 +9,7 @@ import java.util.Collection;
 
 class MyUserPrincipal implements UserDetails {
     private final User user;
-
+    @Autowired
     MyUserPrincipal(User user) {
         this.user = user;
     }

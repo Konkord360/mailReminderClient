@@ -2,6 +2,7 @@ package com.koncor.mailReminder.accessDataJPA;
 
 import com.koncor.mailReminder.model.Role;
 import com.koncor.mailReminder.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.util.Set;
 public class MyUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
+    @Autowired
     public MyUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

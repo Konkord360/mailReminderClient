@@ -13,24 +13,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SecurityServiceImpl implements SecurityService {
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     private final MyUserDetailsService myUserDetailsService;
     private static final Logger logger = LoggerFactory.getLogger(SecurityServiceImpl.class);
 
     @Autowired
-    public SecurityServiceImpl(AuthenticationManager authenticationManager, MyUserDetailsService myUserDetailsService) {
+    public SecurityServiceImpl( AuthenticationManager authenticationManager, MyUserDetailsService myUserDetailsService) {
         this.authenticationManager = authenticationManager;
         this.myUserDetailsService = myUserDetailsService;
     }
 
     @Override
     public String findLoggedInUsername() {
-        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
-        if (userDetails instanceof UserDetails) {
-            return ((UserDetails)userDetails).getUsername();
-        }
-
-        return null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 
     @Override
@@ -39,7 +35,7 @@ public class SecurityServiceImpl implements SecurityService {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
         Authentication auth = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-
+        System.out.println("************IS AUTHENTICATED******************" + auth.isAuthenticated());
         if (auth.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(auth);
             logger.debug(String.format("Auto login %s successfully!", username));

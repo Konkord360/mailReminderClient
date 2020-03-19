@@ -3,6 +3,7 @@ package com.koncor.mailReminder.controller;
 import com.koncor.mailReminder.model.User;
 import com.koncor.mailReminder.services.SecurityService;
 import com.koncor.mailReminder.services.UserService;
+import com.koncor.mailReminder.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,11 +19,13 @@ import javax.validation.Valid;
 public class ApplicationAccessController {
     private final UserService userService;
     private final SecurityService securityService;
+    private UserValidator userValidator;
 
     @Autowired
-    public ApplicationAccessController(UserService userService, SecurityService securityService) {
+    public ApplicationAccessController(UserService userService, SecurityService securityService, UserValidator userValidator) {
         this.userService = userService;
         this.securityService = securityService;
+        this.userValidator = userValidator;
     }
 
     @GetMapping("/register")
@@ -30,21 +33,22 @@ public class ApplicationAccessController {
 
         model.addAttribute("user", new User());
 
+        if (securityService.findLoggedInUsername().equals("anonymousUser"))
+            return "redirect:/dashboard";
         return "register";
     }
 
     //
     @PostMapping("/register")
     public String registerUser(@ModelAttribute @Valid User user, BindingResult bindingResult) {
+        userValidator.validate(user, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "registration";
+            return "register";
         }
 
         userService.save(user);
-
         securityService.autoLogin(user.getUsername(), user.getPasswordConfirm());
-        System.out.println("LOGGED IN USER: " + securityService.findLoggedInUsername());
         return "redirect:/dashboard";
     }
 
@@ -72,7 +76,6 @@ public class ApplicationAccessController {
     }
 
     //for Future uses
-    // If user will be successfully authenticated he/she will be taken to the login secure page.
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public ModelAndView adminPage() {
 
@@ -96,7 +99,7 @@ public class ApplicationAccessController {
         if (logout != null) {
             m.addObject("msg", "You have left successfully.");
         }
-        if (securityService.findLoggedInUsername() != null) {
+        if (securityService.findLoggedInUsername().equals("anonymousUser")) {
             m.setViewName("redirect:/dashboard");
             return m;
         }
