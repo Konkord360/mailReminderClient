@@ -33,7 +33,7 @@ public class ApplicationAccessController {
 
         model.addAttribute("user", new User());
 
-        if (securityService.findLoggedInUsername().equals("anonymousUser"))
+        if (securityService.findLoggedInUsername() != null && !securityService.findLoggedInUsername().equals("anonymousUser"))
             return "redirect:/dashboard";
         return "register";
     }
@@ -49,20 +49,14 @@ public class ApplicationAccessController {
 
         userService.save(user);
         securityService.autoLogin(user.getUsername(), user.getPasswordConfirm());
+        System.out.println("LOGGED IN USER ******************* " + securityService.findLoggedInUsername());
         return "redirect:/dashboard";
     }
 
     //
     @GetMapping("/dashboard")
     public String displayDashboard(Model model) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
+        String username = securityService.findLoggedInUsername();
 
         User user = new User(username, "");
         System.out.println(username);
@@ -99,7 +93,7 @@ public class ApplicationAccessController {
         if (logout != null) {
             m.addObject("msg", "You have left successfully.");
         }
-        if (securityService.findLoggedInUsername().equals("anonymousUser")) {
+        if (securityService.findLoggedInUsername() != null && !securityService.findLoggedInUsername().equals("anonymousUser")) {
             m.setViewName("redirect:/dashboard");
             return m;
         }

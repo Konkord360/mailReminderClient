@@ -38,7 +38,7 @@ public class SecurityServiceImpl implements SecurityService {
         System.out.println("************IS AUTHENTICATED******************" + auth.isAuthenticated());
         if (auth.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(auth);
-            logger.debug(String.format("Auto login %s successfully!", username));
+            System.out.println(String.format("Auto login %s successfully!", username));
         }
     }
 }
